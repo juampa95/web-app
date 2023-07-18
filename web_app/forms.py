@@ -5,3 +5,4 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['cliente_id', 'nombre', 'apellido', 'email', 'telefono']
+
