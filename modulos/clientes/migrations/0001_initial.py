@@ -48,14 +48,14 @@ class Migration(migrations.Migration):
                     "cliente",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="web_app.cliente",
+                        to="clientes.cliente",
                     ),
                 ),
                 (
                     "producto",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="web_app.producto",
+                        to="clientes.producto",
                     ),
                 ),
             ],

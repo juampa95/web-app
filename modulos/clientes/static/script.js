@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkedCheckbox = document.querySelector('input[name="selected_clientes"]:checked');
         if (checkedCheckbox) {
             const clienteId = checkedCheckbox.value;
-            window.location.href = `/clientes/editar/${clienteId}/`;
+            window.location.href = `editar/${clienteId}/`;
         }
     });
 
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirmar = confirm("¿Estás seguro de que deseas eliminar los clientes seleccionados?");
             if (confirmar) {
                 clienteIds.forEach(clienteId => {
-                    window.location.href = `/clientes/eliminar/${clienteId}/`;
+                    window.location.href = `eliminar/${clienteId}/`;
                 });
             }
         }

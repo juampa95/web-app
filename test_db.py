@@ -1,10 +1,8 @@
-from web_app.models import Cliente
+from modulos.clientes.models import Cliente
 
-# Obtener el modelo Cliente
-modelo_cliente = Cliente
+# Obtener todos los registros de la base de datos
+registros = Cliente.objects.all()
 
-# Obtener los nombres de las columnas del modelo
-nombres_columnas = [campo.name for campo in modelo_cliente._meta.get_fields()]
-
-# Imprimir los nombres de las columnas
-print(nombres_columnas)
+# Imprimir todos los campos y valores de cada registro
+for registro in registros:
+    print(registro.__dict__)
