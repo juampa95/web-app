@@ -22,7 +22,6 @@ def crear_cliente(request):
 
     return render(request, 'crear_cliente.html', {'form': form})
 
-
 def editar_cliente(request, cliente_id):
     cliente = get_object_or_404(Cliente, pk=cliente_id)
     if request.method == 'POST':

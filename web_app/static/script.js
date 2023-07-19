@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const crearClienteButton = document.getElementById('crear-cliente');
     crearClienteButton.addEventListener('click', () => {
-        window.location.href = "{% url 'crear_cliente' %}";
+        window.location.href = "crear/";
     });
 
     const editarClienteButton = document.getElementById('editar-cliente');
