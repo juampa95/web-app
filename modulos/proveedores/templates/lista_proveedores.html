@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla de Proveedores</title>
+    <script src="{% static 'script_proveedores.js' %}"></script>
+</head>
+<body>
+    <h1>Tabla de Proveedores</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Proveedor ID</th>
+                <th>Razón Social</th>
+                <th>CUIT</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Mov</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for proveedor in proveedores %}
+            <tr>
+                <td>{{ proveedor.proveedor_id }}</td>
+                <td>{{ proveedor.razon_social }}</td>
+                <td>{{ proveedor.cuit }}</td>
+                <td>{{ proveedor.email }}</td>
+                <td>{{ proveedor.telefono }}</td>
+                <td>{{ proveedor.mov }}</td>
+                <td>
+                    <input type="checkbox" name="selected_proveedores" value="{{ proveedor.proveedor_id }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        <button id="crear-proveedor" class="btn btn-primary">Crear Proveedor</button>
+        <button id="editar-proveedor" class="btn btn-primary" disabled>Editar Proveedor</button>
+        <button id="eliminar-proveedor" class="btn btn-danger" disabled>Eliminar Proveedor</button>
+    </div>
+</body>
+</html>

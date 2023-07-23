@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "modulos.clientes",
     "modulos.productos",
     "modulos.ventas",
+    "modulos.proveedores",
 ]
 
 MIDDLEWARE = [
@@ -61,6 +62,8 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / '../modulos/clientes/templates',
                  BASE_DIR / "modulos/productos/templates",
                  BASE_DIR / "modulos/ventas/templates",
+                 BASE_DIR / "modulos/proveedores/templates",
+                 BASE_DIR / "templates",
                  ]
         ,
         "APP_DIRS": True,
@@ -131,6 +134,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'modulos', 'productos', 'static'),
                     os.path.join(BASE_DIR, 'modulos', 'clientes', 'static'),
                     os.path.join(BASE_DIR, 'modulos', 'ventas', 'static'),
+                    os.path.join(BASE_DIR, 'modulos', 'proveedores', 'static'),
                     ]
 
 
