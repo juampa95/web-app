@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "modulos.clientes",
+    "modulos.productos",
+    "modulos.ventas",
 ]
 
 MIDDLEWARE = [
@@ -56,7 +58,10 @@ ROOT_URLCONF = "djangoProject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / '../modulos/clientes/templates']
+        "DIRS": [BASE_DIR / '../modulos/clientes/templates',
+                 BASE_DIR / "modulos/productos/templates",
+                 BASE_DIR / "modulos/ventas/templates",
+                 ]
         ,
         "APP_DIRS": True,
         "OPTIONS": {
@@ -79,9 +84,9 @@ WSGI_APPLICATION = "djangoProject.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'client',
-        'USER': 'root',
-        'PASSWORD': 'jpmanzano2023',
+        'NAME': 'db_01',
+        'USER': 'juampamanzano',
+        'PASSWORD': 'jpadmin95',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -122,7 +127,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'modulos', 'productos', 'static'),
+                    os.path.join(BASE_DIR, 'modulos', 'clientes', 'static'),
+                    os.path.join(BASE_DIR, 'modulos', 'ventas', 'static'),
+                    ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

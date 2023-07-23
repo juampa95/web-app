@@ -1,0 +1,15 @@
+{% extends 'base_ventas.html' %}
+
+{% block content %}
+    <h1>Detalle de Venta</h1>
+
+    <h3>ID de Venta: {{ venta.ventas_id }}</h3>
+    <p>Fecha: {{ venta.fecha }}</p>
+    <p>Cantidad: {{ venta.cantidad }}</p>
+    <p>Cliente: {{ venta.cliente }}</p>
+    <p>Producto: {{ venta.producto }}</p>
+
+    <!-- Agrega más detalles específicos de la venta si es necesario -->
+
+    <a href="{% url 'lista_ventas' %}">Volver a la lista de ventas</a>
+{% endblock %}

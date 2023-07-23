@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla de Productos</title>
+    <script src="{% static 'script_productos.js' %}"></script>
+</head>
+<body>
+    <h1>Tabla de Productos</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Precio</th>
+                <th>Mov</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.item_id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.precio }}</td>
+                <td>{{ producto.mov }}</td>
+                <td>
+                    <input type="checkbox" name="selected_items" value="{{ producto.item_id }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        <button id="crear-producto" class="btn btn-primary">Crear Producto</button>
+        <button id="editar-producto" class="btn btn-primary" disabled>Editar Producto</button>
+        <button id="eliminar-producto" class="btn btn-danger" disabled>Eliminar Producto</button>
+    </div>
+</body>
+</html>

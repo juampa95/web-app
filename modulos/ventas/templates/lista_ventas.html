@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Ventas</title>
+    <script src="{% static 'script_ventas.js' %}"></script>
+</head>
+<body>
+    <h1>Lista de Ventas</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ventas ID</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Fecha</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.ventas_id }}</td>
+                <td>{{ venta.cliente }}</td>
+                <td>{{ venta.producto }}</td>
+                <td>{{ venta.fecha }}</td>
+                <td>{{ venta.cantidad }}</td>
+                <td><input type="checkbox" name="selected_ventas" value="{{ venta.ventas_id }}"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        <button id="crear-venta" class="btn btn-primary">Crear Venta</button>
+        <button id="editar-venta" class="btn btn-primary" disabled>Editar Venta</button>
+        <button id="eliminar-venta" class="btn btn-danger" disabled>Eliminar Venta</button>
+    </div>
+</body>
+</html>

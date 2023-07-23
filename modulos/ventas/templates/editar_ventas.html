@@ -1,0 +1,10 @@
+{% extends 'base_ventas.html' %}
+
+{% block content %}
+  <h2>Editar Venta</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Editar Venta Generada</button>
+  </form>
+{% endblock %}
