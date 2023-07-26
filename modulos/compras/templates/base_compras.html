@@ -1,13 +1,18 @@
-{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lista de Compras</title>
+    <title>{% block title %}Compras{% endblock %}</title>
 </head>
 <body>
-    {% block content %}
-    {% endblock %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'script_compras.js' %}"></script>
+    <header>
+        <!-- Aquí puedes agregar el encabezado común a todas las páginas -->
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer>
+        <!-- Aquí puedes agregar el pie de página común a todas las páginas -->
+    </footer>
 </body>
 </html>

@@ -2,26 +2,12 @@
 
 {% block content %}
   <h2>Lista de Compras</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Número de Factura</th>
-        <th>Proveedor</th>
-        <th>Fecha</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for factura in facturas %}
-        <tr>
-          <td>{{ factura.numero_factura }}</td>
-          <td>{{ factura.proveedor.razon_social }}</td>
-          <td>{{ factura.fecha }}</td>
-          <td>{{ factura.total }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <a href="{% url 'ingresar_compra' %}" class="btn btn-success">Nueva Compra</a>
+  <ul>
+    {% for compra in compras %}
+      <li>
+        <a href="{% url 'detalle_compra' compra.id %}">Factura Número: {{ compra.numero_factura }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'ingresar_compra' %}">Ingresar Nueva Compra</a>
 {% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base_compras.html' %}
+
+{% block content %}
+  <!-- Mostrar información básica de la compra (número de factura, proveedor, fecha, etc.) -->
+  <h2>Detalle de Items de la Compra</h2>
+  <p>Número de Factura: {{ compra.numero_factura }}</p>
+  <p>Proveedor: {{ compra.proveedor }}</p>
+  <p>Fecha: {{ compra.fecha }}</p>
+
+  <!-- Mostrar la lista de items y su detalle -->
+  <table>
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for detalle in detalles %}
+        <tr>
+          <td>{{ detalle.producto.nombre }}</td>
+          <td>{{ detalle.cantidad }}</td>
+          <td>{{ detalle.precio }}</td>
+          <td>{{ detalle.subtotal }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">Total:</td>
+        <td>{{ compra.total }}</td>
+      </tr>
+    </tfoot>
+  </table>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base_compras.html' %}
+
+{% block content %}
+  <h2>Agregar Items a la Compra</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <table>
+      {% for form in formset %}
+        {{ form.as_table }}
+      {% endfor %}
+    </table>
+    <button type="submit">Guardar Items</button>
+  </form>
+  <a href="{% url 'detalle_compra' compra.id %}">Volver al Detalle de Compra</a>
+{% endblock %}

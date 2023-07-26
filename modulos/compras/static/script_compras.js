@@ -1,96 +1,118 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const formularioCompra = document.getElementById('formulario-compra');
-  const productosContainer = document.getElementById('productos-container');
   const agregarProductoBtn = document.getElementById('agregar-producto-btn');
+  const guardarCompraBtn = document.getElementById('guardar-compra-btn');
+  const productosSelect = document.getElementById('productos-select');
+  const cantidadInput = document.getElementById('cantidad-input');
+  const precioInput = document.getElementById('precio-input');
+  const productosAgregados = document.getElementById('productos-agregados');
+
+
+  // Array para almacenar los detalles de compra
+  let detallesCompra = [];
 
   agregarProductoBtn.addEventListener('click', () => {
-    const productoRow = document.createElement('div');
-    productoRow.classList.add('producto-row');
+    console.log('Botón "Agregar Item" clickeado');
 
-    const productoInput = document.createElement('input');
-    productoInput.classList.add('producto-autocomplete');
-    productoInput.name = 'producto';
-    productoInput.required = true;
+    // Obtener los valores de los inputs
+    const productoId = productosSelect.value;
+    const cantidad = cantidadInput.value;
+    const precio = precioInput.value;
 
-    const cantidadInput = document.createElement('input');
-    cantidadInput.classList.add('cantidad');
-    cantidadInput.type = 'number';
-    cantidadInput.name = 'cantidad';
-    cantidadInput.value = '1';
-    cantidadInput.required = true;
+    // Validar que los campos no estén vacíos
+    if (productoId && cantidad && precio) {
+      // Agregar el detalle de compra al array
+      detallesCompra.push({ item_id: productoId, cantidad: cantidad, precio: precio });
 
-    const precioInput = document.createElement('input');
-    precioInput.classList.add('precio');
-    precioInput.type = 'number';
-    precioInput.step = '0.01';
-    precioInput.name = 'precio';
-    precioInput.required = true;
+      // Limpiar los inputs para el siguiente producto
+      productosSelect.value = '';
+      cantidadInput.value = '1';
+      precioInput.value = '';
 
-    productoRow.appendChild(document.createTextNode('Producto: '));
-    productoRow.appendChild(productoInput);
-    productoRow.appendChild(document.createTextNode(' Cantidad: '));
-    productoRow.appendChild(cantidadInput);
-    productoRow.appendChild(document.createTextNode(' Precio: '));
-    productoRow.appendChild(precioInput);
-
-    productosContainer.appendChild(productoRow);
+      // Mostrar los detalles de compra en la tabla
+      mostrarDetallesCompra();
+    }
   });
 
-  formularioCompra.addEventListener('submit', (event) => {
-    event.preventDefault();
+  guardarCompraBtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    // Validar que se haya agregado al menos un detalle de compra
+    if (detallesCompra.length > 0) {
+      // Crear un objeto con los datos de la compra y los detalles de compra
+      const data = {
+        numero_factura: document.getElementById('numero_factura').value,
+        proveedor_id: document.getElementById('proveedor_id').value,
+        fecha: document.getElementById('fecha').value,
+        detalles: detallesCompra
+      };
 
-    const numeroFactura = document.getElementById('numero_factura').value;
-    const proveedorId = document.getElementById('proveedor_id').value;
-    const fecha = document.getElementById('fecha').value;
-    const productos = document.querySelectorAll('.producto-autocomplete');
-    const cantidades = document.querySelectorAll('.cantidad');
-    const precios = document.querySelectorAll('.precio');
+      const url = window.location.origin + '/compras/guardar/';
+      const csrftoken = getCookie('csrftoken'); // Implementa la función getCookie para obtener el valor del token CSRF desde las cookies
 
-    const productosData = [];
-    for (let i = 0; i < productos.length; i++) {
-      const producto = productos[i].value;
-      const cantidad = cantidades[i].value;
-      const precio = precios[i].value;
-      productosData.push({ producto, cantidad, precio });
-    }
 
-    const data = {
-      numero_factura: numeroFactura,
-      proveedor_id: proveedorId,
-      fecha: fecha,
-      productos: productosData,
-      csrfmiddlewaretoken: getCookie('csrftoken')
-    };
-
-    fetch('/compras/ingresar/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => response.json())
-      .then(data => {
-        window.location.href = `/compras/detalle/${data.compra_id}/`;
+      // Enviar la petición fetch al servidor
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify(data)
       })
-      .catch(error => {
-        console.error('Error al guardar la compra:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          // Mostrar un mensaje de éxito
+          alert('Compra guardada exitosamente');
+
+          // Limpiar la lista de detalles de compra
+          detallesCompra = [];
+          mostrarDetallesCompra();
+
+          // Limpiar los campos del formulario de compra
+          document.getElementById('numero_factura').value = '';
+          document.getElementById('proveedor_id').value = '';
+          document.getElementById('fecha').value = '';
+
+          // Redirigir a la página de detalle de la compra guardada
+          window.location.href = `/compras/detalle_items_factura/${data.compra_id}`;
+
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error al guardar la compra:', error);
+        });
+    } else {
+      alert('Agrega al menos un producto antes de guardar la compra.');
+    }
   });
 
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
+
+  // Función para mostrar los detalles de compra en la tabla
+  function mostrarDetallesCompra() {
+    productosAgregados.innerHTML = '';
+
+    detallesCompra.forEach(detalle => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${detalle.producto_id}</td>
+        <td>${detalle.cantidad}</td>
+        <td>${detalle.precio}</td>
+      `;
+      productosAgregados.appendChild(tr);
+    });
   }
 });
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Buscar el nombre de la cookie y obtener su valor
+      if (cookie.substring(0, name.length + 1) === `${name}=`) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
