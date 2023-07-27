@@ -7,6 +7,8 @@ from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 # from modulos.proveedores.models import Proveedores
 import json
 from django.views.decorators.csrf import csrf_exempt
+import traceback
+
 
 def lista_compras(request):
     compras = Compra.objects.all()
@@ -84,45 +86,62 @@ def lista_productos(request):
     productos = Producto.objects.all().values('item_id', 'nombre')
     return JsonResponse(list(productos), safe=False)
 
+
 @csrf_exempt
 def guardar_compra(request):
     print("Guardando compra")
     if request.method == 'POST':
+        # Leer el cuerpo de la solicitud como una cadena JSON
+        body_data = request.body.decode('utf-8')
+        print("Contenido del cuerpo de la solicitud:", body_data)  # Agregar esta línea
+
+        # Asegurarse de que el cuerpo no esté vacío
+        if not body_data:
+            return JsonResponse({'error': 'El cuerpo de la solicitud está vacío'}, status=400)
+
+        # Convertir la cadena JSON en un diccionario de Python
+        data = json.loads(body_data)
+
         # Obtener los datos enviados desde el cliente
-        numero_factura = request.POST.get('numero_factura')
-        proveedor_id = request.POST.get('proveedor_id')
-        fecha = request.POST.get('fecha')
-        detalles = request.POST.getlist('detalles')
+        numero_factura = data.get('numero_factura')
+        proveedor_id = data.get('proveedor_id')
+        fecha = data.get('fecha')
+        detalles = data.get('detalles')
 
-        # Crear una nueva instancia de la compra y guardarla en la base de datos
+        print(numero_factura)
+        print(proveedor_id)
+        print(fecha)
+        print(detalles)
 
-        nueva_compra = Compra.objects.create(numero_factura=numero_factura, proveedor=proveedor_id, fecha=fecha)
+        try:
+            # Crear una nueva instancia de la compra y guardarla en la base de datos
+            nueva_compra = Compra.objects.create(numero_factura=numero_factura, proveedor=proveedor_id, fecha=fecha)
 
-        # Ahora procesa los datos de los productos y crea y guarda los detalles de compra
-        for detalle in detalles:
-            producto_id = detalle['item_id']
-            cantidad = detalle['cantidad']
-            precio = detalle['precio']
+            # Procesar los datos de los productos y crear y guardar los detalles de compra
+            for detalle in detalles:
+                producto_id = detalle['item_id']
+                cantidad = detalle['cantidad']
+                precio = detalle['precio']
 
-            # Aquí puedes obtener el producto desde la base de datos
-            producto = Producto.objects.get(pk=producto_id)
+                # Aquí puedes obtener el producto desde la base de datos
+                producto = Producto.objects.get(pk=producto_id)
 
-            # Calcular el subtotal
-            subtotal = Decimal(cantidad) * Decimal(precio)
+                # Calcular el subtotal
+                subtotal = Decimal(cantidad) * Decimal(precio)
 
-            # Crear el detalle de compra y asociarlo a la nueva compra
-            DetalleCompra.objects.create(compra=nueva_compra, producto=producto, cantidad=cantidad, precio=precio,
-                                         subtotal=subtotal)
+                # Crear el detalle de compra y asociarlo a la nueva compra
+                DetalleCompra.objects.create(compra=nueva_compra, producto=producto, cantidad=cantidad, precio=precio,
+                                             subtotal=subtotal)
 
-        # Actualizar el total de la compra
-        nueva_compra.total = sum(detalle.subtotal for detalle in nueva_compra.detallecompra_set.all())
-        nueva_compra.save()
-        print("aca esta la info si es que se guardo")
-        print(request.POST)
+            # Actualizar el total de la compra
+            nueva_compra.total = sum(detalle.subtotal for detalle in nueva_compra.detallecompra_set.all())
+            nueva_compra.save()
 
-        # Finalmente, envía una respuesta JSON al cliente indicando que la compra se ha guardado correctamente.
-        return JsonResponse({'mensaje': 'Compra guardada exitosamente'})
-        # return HttpResponse('Factura guardada con éxito')
+            # Finalmente, envía una respuesta JSON al cliente indicando que la compra se ha guardado correctamente.
+            return JsonResponse({'mensaje': 'Compra guardada exitosamente'})
+        except Exception as e:
+            # En caso de error, devuelve una respuesta JSON con el mensaje de error
+            return JsonResponse({'error': str(e)}, status=500)
     else:
+        # Devuelve una respuesta JSON con el mensaje de error en caso de que el método no sea permitido
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-        # return HttpResponseBadRequest('Error al guardar la factura')

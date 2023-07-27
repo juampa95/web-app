@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const cantidadInput = document.getElementById('cantidad-input');
   const precioInput = document.getElementById('precio-input');
   const productosAgregados = document.getElementById('productos-agregados');
+  const numeroFacturaInput = document.getElementById('numero_factura');
+  const proveedorSelect = document.getElementById('proveedor_id');
+  const fechaInput = document.getElementById('fecha');
 
 
   // Array para almacenar los detalles de compra
@@ -33,57 +36,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  guardarCompraBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    // Validar que se haya agregado al menos un detalle de compra
-    if (detallesCompra.length > 0) {
-      // Crear un objeto con los datos de la compra y los detalles de compra
-      const data = {
-        numero_factura: document.getElementById('numero_factura').value,
-        proveedor_id: document.getElementById('proveedor_id').value,
-        fecha: document.getElementById('fecha').value,
-        detalles: detallesCompra
-      };
+  // Función para enviar los detalles de compra al servidor
+  function guardarCompra() {
+    // Obtener el token CSRF
+    const csrfToken = getCookie('csrftoken');
 
-      const url = window.location.origin + '/compras/guardar/';
-      const csrftoken = getCookie('csrftoken'); // Implementa la función getCookie para obtener el valor del token CSRF desde las cookies
+    // Obtener los detalles de compra almacenados en el array
+    const detalles = detallesCompra;
 
+    // Crear un objeto que contiene los datos a enviar al servidor
+    const data = {
+      numero_factura: numeroFacturaInput.value,
+      proveedor_id: proveedorSelect.value,
+      fecha: fechaInput.value,
+      detalles: detalles,
+    };
 
-      // Enviar la petición fetch al servidor
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrftoken,
-        },
-        body: JSON.stringify(data)
+    // Realizar una solicitud POST al servidor para guardar la compra
+    fetch('/compras/guardar/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify(data), // Convertir el objeto 'data' a una cadena JSON
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Aquí puedes manejar la respuesta del servidor si es necesario
+        console.log(data);
       })
-        .then(response => response.json())
-        .then(data => {
-          // Mostrar un mensaje de éxito
-          alert('Compra guardada exitosamente');
-
-          // Limpiar la lista de detalles de compra
-          detallesCompra = [];
-          mostrarDetallesCompra();
-
-          // Limpiar los campos del formulario de compra
-          document.getElementById('numero_factura').value = '';
-          document.getElementById('proveedor_id').value = '';
-          document.getElementById('fecha').value = '';
-
-          // Redirigir a la página de detalle de la compra guardada
-          window.location.href = `/compras/detalle_items_factura/${data.compra_id}`;
-
-          console.log(data);
-        })
-        .catch(error => {
-          console.error('Error al guardar la compra:', error);
-        });
-    } else {
-      alert('Agrega al menos un producto antes de guardar la compra.');
-    }
-  });
+      .catch(error => {
+        // En caso de error, muestra el mensaje de error en la consola
+        console.error('Error al guardar la compra:', error);
+      });
+  }
+  guardarCompraBtn.addEventListener('click', guardarCompra);
 
 
   // Función para mostrar los detalles de compra en la tabla
@@ -93,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     detallesCompra.forEach(detalle => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${detalle.producto_id}</td>
+        <td>${detalle.item_id}</td>
         <td>${detalle.cantidad}</td>
         <td>${detalle.precio}</td>
       `;
