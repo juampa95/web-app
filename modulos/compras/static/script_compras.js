@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(data => {
         // Aquí puedes manejar la respuesta del servidor si es necesario
         console.log(data);
+        window.location.href = '/compras/detalle/' + data.compra_id;
       })
       .catch(error => {
         // En caso de error, muestra el mensaje de error en la consola

@@ -105,6 +105,7 @@ def guardar_compra(request):
         # Obtener los datos enviados desde el cliente
         numero_factura = data.get('numero_factura')
         proveedor_id = data.get('proveedor_id')
+        proveedor = get_object_or_404(Proveedores, pk=proveedor_id)
         fecha = data.get('fecha')
         detalles = data.get('detalles')
 
@@ -115,16 +116,14 @@ def guardar_compra(request):
 
         try:
             # Crear una nueva instancia de la compra y guardarla en la base de datos
-            nueva_compra = Compra.objects.create(numero_factura=numero_factura, proveedor=proveedor_id, fecha=fecha)
+            nueva_compra = Compra.objects.create(numero_factura=numero_factura, proveedor=proveedor, fecha=fecha)
 
             # Procesar los datos de los productos y crear y guardar los detalles de compra
             for detalle in detalles:
                 producto_id = detalle['item_id']
+                producto = get_object_or_404(Producto, pk=producto_id)
                 cantidad = detalle['cantidad']
                 precio = detalle['precio']
-
-                # Aquí puedes obtener el producto desde la base de datos
-                producto = Producto.objects.get(pk=producto_id)
 
                 # Calcular el subtotal
                 subtotal = Decimal(cantidad) * Decimal(precio)
@@ -138,10 +137,12 @@ def guardar_compra(request):
             nueva_compra.save()
 
             # Finalmente, envía una respuesta JSON al cliente indicando que la compra se ha guardado correctamente.
-            return JsonResponse({'mensaje': 'Compra guardada exitosamente'})
+            return JsonResponse({'compra_id': nueva_compra.id})
         except Exception as e:
             # En caso de error, devuelve una respuesta JSON con el mensaje de error
             return JsonResponse({'error': str(e)}, status=500)
+            print("error")
     else:
         # Devuelve una respuesta JSON con el mensaje de error en caso de que el método no sea permitido
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+        print("error2")
