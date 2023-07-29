@@ -10,6 +10,10 @@ class Cliente(models.Model):
     email = models.EmailField(unique=True)
     telefono = models.CharField(max_length=20)
     mov = models.BooleanField(default=False)
+    regimen_afip_lista = [('RI', 'Responsable Inscripto'),
+                    ('EX', 'Exento/Monotributista'),
+                    ('CF', 'Consumidor Final')]
+    regimen_afip = models.CharField(max_length=2, choices=regimen_afip_lista, default='CF')
 
     def __str__(self):
         return self.nombre
